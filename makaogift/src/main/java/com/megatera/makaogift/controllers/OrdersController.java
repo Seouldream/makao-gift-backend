@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.stream.*;
 
 @RestController
+@RequestMapping("orders")
 public class OrdersController {
 
   private final OrderService orderService;
@@ -20,7 +21,7 @@ public class OrdersController {
     this.placeOrderService = placeOrderService;
   }
 
-  @GetMapping("orders")
+  @GetMapping
   public OrdersDto list(
       //@RequestAttribute("userId") String userId,
       @RequestParam(required = false, defaultValue = "1") Integer page
@@ -34,12 +35,13 @@ public class OrdersController {
     return new OrdersDto(orderDtos);
   }
 
-  @PostMapping("order")
+  @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public ChangedAmountDto placeAnOrder(
-      @RequestAttribute("userId") String userId,
+      //@RequestAttribute("userId") String userId,
       @Validated @RequestBody RequestedOrderDto requestedOrderDto
   ) {
+    String userId = "makaoKim";
     Long amount =
         placeOrderService.placeAnOrder(
         userId,

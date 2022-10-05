@@ -36,5 +36,4 @@ class UserServiceTest {
 
     assertThat(user.getUserId()).isEqualTo("makaoKim");
   }
-
 }

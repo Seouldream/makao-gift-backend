@@ -69,7 +69,7 @@ class OrdersControllerTest {
     Long quantity = 2L;
     Long amount = 10000L;
 
-    mockMvc.perform(MockMvcRequestBuilders.post("/order")
+    mockMvc.perform(MockMvcRequestBuilders.post("/orders")
             .requestAttr("userId","makaoKim")
             .contentType(MediaType.APPLICATION_JSON)
             .content("{" +
@@ -84,7 +84,5 @@ class OrdersControllerTest {
 
     verify(placeOrderService).placeAnOrder(user.getUserId(), recipient, address, message, productId, quantity, amount);
   }
-
   //ToDO 예외 처리 테스트 코드와 코드 잡아줄 것
 }
-
