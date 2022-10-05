@@ -1,45 +1,40 @@
 package com.megatera.makaogift.controllers;
 
-import com.megatera.makaogift.exceptions.*;
 import com.megatera.makaogift.models.*;
 import com.megatera.makaogift.services.*;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.test.autoconfigure.web.servlet.*;
 import org.springframework.boot.test.mock.mockito.*;
+import org.springframework.test.context.*;
 import org.springframework.test.web.servlet.*;
 import org.springframework.test.web.servlet.request.*;
 
-import static org.hamcrest.Matchers.*;
+import java.util.*;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(UserController.class)
-class  UserControllerTest {
+@WebMvcTest(ProductsController.class)
+@ActiveProfiles("test")
+class ProductsControllerTest {
   @Autowired
   private MockMvc mockMvc;
 
   @MockBean
-  private UserService userService;
+  private ProductService productService;
 
   @Test
-  void user() throws Exception {
-    given(userService.detail("makaoKim")).willReturn(User.fake("makaoKim"));
+  void products() throws Exception {
+    given(productService.list(1)).willReturn(
+        List.of(new Product(1L,"cup-maker","mug",1000L))
+    );
 
-    mockMvc.perform(MockMvcRequestBuilders.get("/users/me"))
+    mockMvc.perform(MockMvcRequestBuilders.get("/products"))
         .andExpect(status().isOk())
         .andExpect(content().string(
-            containsString("\"userId\":\"makaoKim\"")
+            containsString("mug")
         ));
-  }
-
-  @Test
-  void userNotFound() throws Exception {
-    given(userService.detail("makaoKim"))
-        .willThrow(new UserNotFound("makaoKim"));
-
-    mockMvc.perform(MockMvcRequestBuilders.get("/users/me"))
-        .andExpect(status().isBadRequest());
   }
 }

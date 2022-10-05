@@ -1,6 +1,7 @@
 package com.megatera.makaogift.dtos;
 
 public class UserDto {
+  private Long id;
   private String userId;
   private String name;
   private Long amount;

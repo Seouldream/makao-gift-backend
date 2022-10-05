@@ -5,7 +5,10 @@ import com.megatera.makaogift.models.*;
 import com.megatera.makaogift.repositories.*;
 import org.springframework.stereotype.*;
 
+import javax.transaction.*;
+
 @Service
+@Transactional
 public class UserService {
   private final UserRepository userRepository;
 
