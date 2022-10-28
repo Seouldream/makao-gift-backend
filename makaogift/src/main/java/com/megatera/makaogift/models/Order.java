@@ -1,12 +1,15 @@
 package com.megatera.makaogift.models;
 
+import com.fasterxml.jackson.annotation.*;
 import com.megatera.makaogift.dtos.*;
 import org.hibernate.annotations.*;
+import org.springframework.format.annotation.*;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.time.*;
+import java.time.format.*;
 
 @Entity
 @Table(name = "PURCHASE")
@@ -22,6 +25,7 @@ public class Order {
   private String message;
   private String brand;
   private String productName;
+  private String url;
 
   public Order() {
   }
@@ -33,7 +37,7 @@ public class Order {
   private LocalDateTime updatedAt;
 
 
-  public Order(Long id, String userId, Long quantity, Long amount, String recipient, String address, String message, String brand, String productName) {
+  public Order(Long id, String userId, Long quantity, Long amount, String recipient, String address, String message, String brand, String productName, String url) {
     this.id = id;
     this.userId = userId;
     this.quantity = quantity;
@@ -43,9 +47,10 @@ public class Order {
     this.message = message;
     this.brand = brand;
     this.productName = productName;
+    this.url = url;
   }
 
-  public Order(String userId, Long quantity, Long amount, String recipient, String address, String message, String brand, String productName) {
+  public Order(String userId, Long quantity, Long amount, String recipient, String address, String message, String brand, String productName, String url) {
     this.userId = userId;
     this.quantity = quantity;
     this.amount = amount;
@@ -54,10 +59,16 @@ public class Order {
     this.message = message;
     this.brand = brand;
     this.productName = productName;
+    this.url = url;
   }
 
   public Long getId() {
     return id;
+  }
+
+
+  public String getUrl() {
+    return url;
   }
 
   public String getUserId() {
@@ -92,8 +103,11 @@ public class Order {
     return productName;
   }
 
+
   public OrderDto toDto() {
-    return new OrderDto(id, quantity, amount, recipient, message, brand, productName);
+    String registrationDate = createdAt == null ? "" : createdAt.toLocalDate().toString();
+
+    return new OrderDto(id, quantity, amount, recipient, message, brand, productName, url, registrationDate);
   }
 }
 

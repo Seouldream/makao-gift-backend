@@ -1,6 +1,8 @@
 package com.megatera.makaogift.controllers;
 
 import com.megatera.makaogift.dtos.*;
+import com.megatera.makaogift.exceptions.*;
+import com.megatera.makaogift.models.*;
 import com.megatera.makaogift.services.*;
 import org.springframework.http.*;
 import org.springframework.validation.annotation.*;
@@ -14,36 +16,37 @@ import java.util.stream.*;
 public class OrdersController {
 
   private final OrderService orderService;
-  private final PlaceOrderService placeOrderService;
 
-  public OrdersController(OrderService orderService, PlaceOrderService placeOrderService) {
+  public OrdersController(OrderService orderService) {
     this.orderService = orderService;
-    this.placeOrderService = placeOrderService;
   }
 
   @GetMapping
   public OrdersDto list(
-      //@RequestAttribute("userId") String userId,
+      @RequestAttribute("userId") String userId,
       @RequestParam(required = false, defaultValue = "1") Integer page
   ) {
-    String userId = "makaoKim";
+
     List<OrderDto> orderDtos =
         orderService.list(userId, page)
             .stream()
-            .map(order -> order.toDto())
+            .map(Order::toDto)
             .collect(Collectors.toList());
-    return new OrdersDto(orderDtos);
+
+    int pageNumber = orderService.pages(userId);
+
+    return new OrdersDto(orderDtos, pageNumber);
   }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public ChangedAmountDto placeAnOrder(
-      //@RequestAttribute("userId") String userId,
+      @RequestAttribute("userId") String userId,
       @Validated @RequestBody RequestedOrderDto requestedOrderDto
   ) {
-    String userId = "makaoKim";
+
     Long amount =
-        placeOrderService.placeAnOrder(
+        orderService.placeAnOrder(
         userId,
         requestedOrderDto.getRecipient(),
         requestedOrderDto.getAddress(),
@@ -54,5 +57,11 @@ public class OrdersController {
         );
 
     return new ChangedAmountDto(amount);
+  }
+
+  @ExceptionHandler(TransactionNotFound.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public String transactionNotFound() {
+    return "거래내역을 불러올 수 없습니다.";
   }
 }

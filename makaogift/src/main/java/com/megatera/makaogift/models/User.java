@@ -2,6 +2,7 @@ package com.megatera.makaogift.models;
 
 import com.megatera.makaogift.dtos.*;
 import org.hibernate.annotations.*;
+import org.springframework.security.crypto.password.*;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
@@ -22,6 +23,8 @@ public class User {
 
   private Long amount;
 
+  private String encodedPassword;
+
   public User() {
   }
 
@@ -31,17 +34,17 @@ public class User {
   @UpdateTimestamp
   private LocalDateTime updatedAt;
 
-  public User(Long id, String userId, String name, Long amount) {
+  public User(Long id, String userId, String name) {
     this.id = id;
     this.userId = userId;
     this.name = name;
-    this.amount = amount;
+    this.amount = 50_000L;
   }
 
-  public User(String userId, String name,Long amount) {
+  public User(String userId, String name) {
     this.userId = userId;
     this.name = name;
-    this.amount = amount;
+    this.amount = 50_000L;
   }
 
   public Long getId() {
@@ -60,15 +63,31 @@ public class User {
     return amount;
   }
 
+  public String getPassword() {
+    return encodedPassword;
+  }
+
   public UserDto toDto() {
     return new UserDto(userId, name, amount);
   }
 
   public static User fake(String userId) {
-    return new User(1L, userId, "makaoKim", 50_000L);
+    return new User(1L, userId, "makaoKim");
   }
 
   public void pay(Long amount) {
     this.amount -= amount;
+  }
+
+  public boolean authenticate(String password,PasswordEncoder passwordEncoder) {
+    return passwordEncoder.matches(password, encodedPassword);
+  }
+
+  public void changePassword(String password, PasswordEncoder passwordEncoder) {
+    encodedPassword = passwordEncoder.encode(password);
+  }
+
+  public UserCreatedDto toCreatedDto() {
+    return new UserCreatedDto(id,userId,name);
   }
 }

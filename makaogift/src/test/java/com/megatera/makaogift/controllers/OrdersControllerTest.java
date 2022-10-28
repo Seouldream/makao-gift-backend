@@ -1,13 +1,14 @@
 package com.megatera.makaogift.controllers;
 
+import com.megatera.makaogift.exceptions.*;
 import com.megatera.makaogift.models.Order;
 import com.megatera.makaogift.models.*;
 import com.megatera.makaogift.services.*;
 import org.junit.jupiter.api.*;
-import org.mockito.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.test.autoconfigure.web.servlet.*;
 import org.springframework.boot.test.mock.mockito.*;
+import org.springframework.data.domain.*;
 import org.springframework.http.*;
 import org.springframework.test.web.servlet.*;
 import org.springframework.test.web.servlet.request.*;
@@ -15,6 +16,7 @@ import org.springframework.test.web.servlet.request.*;
 import java.util.*;
 
 import static org.hamcrest.Matchers.*;
+import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -29,23 +31,23 @@ class OrdersControllerTest {
   @MockBean
   private ProductService productService;
 
-  @MockBean
-  private PlaceOrderService placeOrderService;
-
   @Test
   void list() throws Exception {
-    User user = new User(1L,"makaoKim","makaoKim",50_000L);
+    User user = new User(1L,"makaoKim","makaoKim");
+    List<Order> orders = List.of(new Order(1L,
+        "makaoKim",
+        2L,
+        2000L,
+        "makaoLee",
+        "LA",
+        "Do Better!",
+        "cup-maker",
+        "mug",
+        "url"
+    ));
 
     given(orderService.list(user.getUserId(),1)).willReturn(
-        List.of(new Order(1L,
-            "makaoKim",
-            2L,
-            2000L,
-            "makaoLee",
-            "LA",
-            "Do Better!",
-            "cup-maker",
-            "mug"))
+        new PageImpl<>(orders)
     );
 
     mockMvc.perform(MockMvcRequestBuilders.get("/orders")
@@ -58,9 +60,10 @@ class OrdersControllerTest {
 
   @Test
   void placeAnOrder() throws Exception {
-    User user = new User(1L, "makaoKim", "makaoKim", 50_000L);
+    User user = new User(1L, "makaoKim", "makaoKim");
 
-    Product product = new Product(1L, "cup-maker", "mug", 5_000L);
+    Product product = new Product(1L, "cup-maker", "mug", 5_000L,"별거아님",
+        "https://image.ohou.se/i/bucketplace-v2-development/uploads/cards/projects/165120334937886080.jpg?w=2560&h=1536&c=c&webp=1");
 
     String recipient = "makaoLee";
     String address = "LA";
@@ -82,7 +85,27 @@ class OrdersControllerTest {
                 "}"))
         .andExpect(status().isCreated());
 
-    verify(placeOrderService).placeAnOrder(user.getUserId(), recipient, address, message, productId, quantity, amount);
+    verify(orderService).placeAnOrder(user.getUserId(), recipient, address, message, productId, quantity, amount);
   }
-  //ToDO 예외 처리 테스트 코드와 코드 잡아줄 것
+
+  @Test
+  void placeAnOrderWithoutAddress() throws Exception {
+    User user = new User(1L, "makaoKim", "makaoKim");
+
+    given(orderService.placeAnOrder(any(),any(),any(),any(),any(),any(),any()))
+        .willThrow(new TransactionNotFound());
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/orders")
+            .requestAttr("userId","makaoKim")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{" +
+                "\"recipient\":\"makaoLee\"," +
+                "\"address\":\"\"," +
+                "\"message\":\"Do Better!\"," +
+                "\"productId\":1," +
+                "\"quantity\":2," +
+                "\"amount\":10000" +
+                "}"))
+        .andExpect(status().isBadRequest());
+  }
 }

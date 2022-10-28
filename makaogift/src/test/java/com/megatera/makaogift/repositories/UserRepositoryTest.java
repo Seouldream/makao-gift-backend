@@ -15,7 +15,7 @@ class UserRepositoryTest {
 
   @Test
   void creation() {
-    User user = new User("makaoKim", "makaoKim",50000L);
+    User user = new User("makaoKim", "makaoKim");
 
     userRepository.save(user);
 

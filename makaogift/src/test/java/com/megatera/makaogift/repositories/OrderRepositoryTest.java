@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.*;
 import org.springframework.test.context.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -17,6 +19,8 @@ class OrderRepositoryTest {
 
   @Test
   void creation() {
+//    orderRepository = mock(OrderRepository.class);
+
     Order order = new Order(
         "makaoKim",
         2L,
@@ -25,7 +29,9 @@ class OrderRepositoryTest {
         "LA",
         "Do Better!",
         "cup-maker",
-        "mug");
+        "mug",
+        "url"
+    );
 
     orderRepository.save(order);
 

@@ -27,6 +27,8 @@ public class ProductsController {
             .map(product -> product.toDto())
             .collect(Collectors.toList());
 
-    return new ProductsDto(productDtos);
+    int pageNumber = productService.pages();
+
+    return new ProductsDto(productDtos, pageNumber);
   }
 }

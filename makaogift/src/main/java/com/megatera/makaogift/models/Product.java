@@ -15,6 +15,8 @@ public class Product {
   private String brand;
   private String name;
   private Long price;
+  private String description;
+  private String url;
 
   public Product() {
   }
@@ -25,11 +27,13 @@ public class Product {
   @UpdateTimestamp
   private LocalDateTime updatedAt;
 
-  public Product(Long id, String brand, String name, Long price) {
+  public Product(Long id, String brand, String name, Long price,String description, String url) {
     this.id = id;
     this.brand = brand;
     this.name = name;
     this.price = price;
+    this.description = description;
+    this.url= url;
   }
 
   public Long getId() {
@@ -48,7 +52,15 @@ public class Product {
     return price;
   }
 
+  public String getDescription() {
+    return description;
+  }
+
+  public String getUrl() {
+    return url;
+  }
+
   public ProductDto toDto() {
-    return new ProductDto(id, brand, name, price);
+    return new ProductDto(id, brand, name, price,description,url);
   }
 }

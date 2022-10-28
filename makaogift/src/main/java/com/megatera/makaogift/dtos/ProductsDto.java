@@ -4,15 +4,22 @@ import java.util.*;
 
 public class ProductsDto {
   private List<ProductDto> products;
-
-  public ProductsDto(List<ProductDto> products) {
-    this.products = products;
-  }
+  private int pageNumber;
 
   public ProductsDto() {
   }
 
+  public ProductsDto(List<ProductDto> products, int pageNumber) {
+
+    this.products = products;
+    this.pageNumber = pageNumber;
+  }
+
   public List<ProductDto> getProducts() {
     return products;
+  }
+
+  public int getPageNumber() {
+    return pageNumber;
   }
 }

@@ -13,14 +13,19 @@ import java.util.*;
 public class ProductService {
 
   private ProductRepository productRepository;
+  private Pageable pageable;
 
   public ProductService(ProductRepository productRepository) {
     this.productRepository = productRepository;
   }
 
-  public List<Product> list(int page) {
+  public Page<Product> list(int page) {
     Sort sort = Sort.by("createdAt").descending();
-    Pageable pageable = PageRequest.of(page - 1, 8, sort);
-    return productRepository.findAll();
+     pageable = PageRequest.of(page - 1, 8, sort);
+    return productRepository.findAll(pageable);
+  }
+
+  public int pages() {
+    return productRepository.findAll(pageable).getTotalPages();
   }
 }

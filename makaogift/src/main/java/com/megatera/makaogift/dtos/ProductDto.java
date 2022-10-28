@@ -5,6 +5,8 @@ public class ProductDto {
   private String brand;
   private String name;
   private Long price;
+  private String description;
+  private String url;
 
   public ProductDto() {
   }
@@ -25,10 +27,20 @@ public class ProductDto {
     return price;
   }
 
-  public ProductDto(Long id, String brand, String name, Long price) {
+  public String getDescription() {
+    return description;
+  }
+
+  public String getUrl() {
+    return url;
+  }
+
+  public ProductDto(Long id, String brand, String name, Long price, String description, String url) {
     this.id = id;
     this.brand = brand;
     this.name = name;
     this.price = price;
+    this.description = description;
+    this.url= url;
   }
 }

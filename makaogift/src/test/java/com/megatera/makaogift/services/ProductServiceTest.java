@@ -3,18 +3,21 @@ package com.megatera.makaogift.services;
 import com.megatera.makaogift.models.*;
 import com.megatera.makaogift.repositories.*;
 import org.junit.jupiter.api.*;
+import org.springframework.boot.test.mock.mockito.*;
+import org.springframework.data.domain.*;
 
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.BDDMockito.*;
+import static org.mockito.Mockito.*;
 
 class ProductServiceTest {
   private ProductService productService;
   private ProductRepository productRepository;
+
+  @SpyBean
+  private Pageable pageable;
 
   @BeforeEach
   void setUp() {
@@ -26,13 +29,16 @@ class ProductServiceTest {
 
     Product product = mock(Product.class);
 
-    given(productRepository.findAll())
-        .willReturn(List.of(product));
+    List<Product> products = new ArrayList<>();
+    products.add(product);
 
-    List<Product> products = productService.list(1);
+    Page<Product> page = new PageImpl<>(products);
+
+    given(productRepository.findAll(pageable)).willReturn(page);
 
     assertThat(products).hasSize(1);
 
     assertThat(product.getId()).isNotNull();
+
   }
 }
